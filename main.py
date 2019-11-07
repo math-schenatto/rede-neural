@@ -61,8 +61,6 @@ class Network():
         zs = []
 
         for b, w in zip(self.biases, self.weights):
-            import IPython as ipy
-            ipy.embed()
             z = np.dot(w, activation)+b
             zs.append(z)
             activation = sigmoid(z)
@@ -75,7 +73,7 @@ class Network():
         for l in range(2, self.num_layers):
             z = zs[-l]
             sp = sigmoid_prime(z)
-            delta = np.dot(self.weights[-l-1].transpose(), delta) * sp
+            delta = np.dot(self.weights[-l+1].transpose(), delta) * sp
             nabla_b[-l] = delta
             nabla_w[-l] = np.dot(delta, activations[-l-1].transpose())
 
@@ -131,27 +129,36 @@ treinamento = [
     ('100001100001110011011110001100001100001100001100', '010000000000000000000000000000000000'),
     ('111111000011000110001100001100011000110000111111', '100000000000000000000000000000000000')
 ]
+training_inputs = []
+for linha in treinamento:
+    entrada = []
+    saida = []
+
+    for e in linha[0]:
+        entrada.append(e)
+    for s in linha[1]:
+        saida.append(s)
+
+    entrada_array = np.array(entrada, dtype=np.float32)
+    saida_array = np.array(saida, dtype=np.float32)
+
+    training_inputs.append((np.reshape(entrada_array, (48, 1)), np.reshape(saida_array, (36, 1))))
+
 
 # entrada = 48
 # intermediario = 42
 # saida = 36
-
+# dtype=float32
 # Imports
-import mnist_loader
+#import mnist_loader
 
-training_data, validation_data, test_data = mnist_loader.load_data_wrapper()
-training_data = list(training_data)
+#training_data, validation_data, test_data = mnist_loader.load_data_wrapper()
+#training_data = list(training_data)
+#import  IPython as ipy
+#ipy.embed()
 
-
-import  IPython as ipy
-ipy.embed()
 rede = Network([48,42,36])
-rede.SGD(treinamento, 1000, mini_batch_size=20, eta=0.5, test_data=None)
+rede.SGD(training_inputs, 1000, mini_batch_size=20, eta=0.5, test_data=None)
 
-print(rede.num_layers, rede.biases, rede.weights)
-
-import IPython as ipy
-ipy.embed()
-
-
+#print(rede.num_layers, rede.biases, rede.weights)
 
