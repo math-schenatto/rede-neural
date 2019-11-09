@@ -89,9 +89,11 @@ class Network():
         return sum(int(x == y) for (x, y) in test_results)
 
     def identify(self,single_line):
-        prediction = self.feedforward(single_line[0])
-        answer = single_line[1]
-        if np.array_equal(answer[1],prediction[1]):
+        prediction = np.argmax(self.feedforward(single_line[0]))
+        answer = np.argmax(single_line[1])
+        print(self.feedforward(single_line[0]))
+        print(answer)
+        if prediction == answer:
             print("Acertou!")
         else:
             print("A resposta é:", answer, "A rede respondeu:", prediction)
@@ -151,8 +153,12 @@ rede.SGD(training_inputs, 1000, mini_batch_size=20, eta=0.5, test_data=None)
 teste = [
     ('010111010','001'),
     ('010111011','001'),
+    ('111111111','001'),
+    ('000000000','001'),
 ]
+
 test_inputs = []
+
 for linha in teste:
     entrada = []
     saida = []
@@ -167,6 +173,5 @@ for linha in teste:
 
     test_inputs.append((np.reshape(entrada_array, (neuronios_entrada, 1)), np.reshape(saida_array, (neuronios_saida, 1))))
 
-single_test = test_inputs[0]
-
-#print(rede.num_layers, rede.biases, rede.weights)
+for single_test in test_inputs:
+    rede.identify(single_test)
