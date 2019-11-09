@@ -1,5 +1,6 @@
 import numpy as np
 import random
+from index import index
 class Network():
 
     def __init__(self, sizes):
@@ -91,12 +92,12 @@ class Network():
     def identify(self,single_line):
         prediction = np.argmax(self.feedforward(single_line[0]))
         answer = np.argmax(single_line[1])
-        print(self.feedforward(single_line[0]))
-        print(answer)
         if prediction == answer:
             print("Acertou!")
         else:
-            print("A resposta é:", answer, "A rede respondeu:", prediction)
+            print("A resposta é:", index[answer], "A rede respondeu:", index[prediction])
+        print(self.feedforward(single_line[0]))
+        print(answer)
 
 
     def cost_derivative(self, output_activations, y):
@@ -175,3 +176,5 @@ for linha in teste:
 
 for single_test in test_inputs:
     rede.identify(single_test)
+
+single_test = test_inputs[0]
