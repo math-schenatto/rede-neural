@@ -1,6 +1,6 @@
 import numpy as np
 import random
-from index import index
+from indexcompleto import index
 class Network():
 
     def __init__(self, sizes):
@@ -93,11 +93,12 @@ class Network():
         prediction = np.argmax(self.feedforward(single_line[0]))
         answer = np.argmax(single_line[1])
         if prediction == answer:
-            print("Acertou!")
+            print("Acertou! ✅")
         else:
-            print("Errou!")
+            print("Errou! ❌")
         print("A resposta é:", index[answer], "A rede respondeu:", index[prediction])
         print(self.feedforward(single_line[0]))
+        print(answer)
 
 
     def cost_derivative(self, output_activations, y):
@@ -113,14 +114,14 @@ def sigmoid(z):
 def sigmoid_prime(z):
     return sigmoid(z)*(1-sigmoid(z))
 
-neuronios_entrada = 9
-neuronios_intermediario = 6
-neuronios_saida = 3
+neuronios_entrada = 48
+neuronios_intermediario = 52
+neuronios_saida = 36
 
 treinamento = [
-    ('010111010','001'),
-    ('000111000','010'),
-    ('101010101','100')
+    ('111111100001100011100101101001110001100001111111','000000000000000000000000000000000001'),
+    ('001100011100110100100100000100000100000100111111','000000000000000000000000000000000010'),
+    ('111111000001000001000001111111100000100000111111','000000000000000000000000000000000100')
 ]
 
 training_inputs = []
@@ -138,24 +139,13 @@ for linha in treinamento:
 
     training_inputs.append((np.reshape(entrada_array, (neuronios_entrada, 1)), np.reshape(saida_array, (neuronios_saida, 1))))
 
-# dtype=float32
-# Imports
-#import mnist_loader
-
-#training_data, validation_data, test_data = mnist_loader.load_data_wrapper()
-#training_data = list(training_data)
-#import  IPython as ipy
-#ipy.embed()
-
 rede = Network([neuronios_entrada,neuronios_intermediario,neuronios_saida])
 rede.SGD(training_inputs, 1000, mini_batch_size=20, eta=0.5, test_data=None)
 
-
 teste = [
-    ('010111010','001'),
-    ('010111011','001'),
-    ('111111111','001'),
-    ('000000000','001'),
+    ('111111100001100011100101101001110001100001111111','000000000000000000000000000000000001'),
+    ('111111100001100011100101101001110001100111111111','000000000000000000000000000000000001'),
+    ('000000000000000000000000000000000000000000000000','000000000000000000000000000000000001')
 ]
 
 test_inputs = []
