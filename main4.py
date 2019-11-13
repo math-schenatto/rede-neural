@@ -129,7 +129,7 @@ rede.weights = saved_weights
 training_inputs = get_training_data()
 test_input      = get_test_data()
 
-rede.SGD(training_inputs, 1, mini_batch_size=1, eta=0.9, test_data=test_input)
+rede.SGD(training_inputs, 100, mini_batch_size=1, eta=0.9, test_data=test_input)
 
 print(" \n TREINAMENTO:")
 for single_test in training_inputs:
@@ -139,10 +139,12 @@ print("\n TESTE:")
 for x, single_test in enumerate(test_input):
     if x == 0:
         print( "\nTESTE:" )
-    if x == 36:
+    if x == 34:
         print( "\nRUIDO MÍNIMO:" )
-    if x == 56:
+    if x == 54:
         print( "\nRUIDO MÉDIO:" )
-    if x == 76:
+    if x == 74:
         print( "\nRUIDO AVANÇADO:" )
+    if x == 94:
+        print( "\nNÃO FAZEM PARTE:" )
     rede.identify(single_test)
