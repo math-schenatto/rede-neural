@@ -34,12 +34,10 @@ class Network():
             for entrada in entradas:
                 self.update_entrada(entrada, tax_aprendizado)
 
-            if test_data:
-                pass
-                #print("Epoch {} : {} /".format(j, self.evaluate(test_data), n_test))
-            else:
-                pass
-                #print("Epoch {} finalizada".format(j))
+            if test_data: 
+                print("Epoch {} : {} /".format(j, self.evaluate(test_data), n_test))
+            else: 
+                print("Epoch {} finalizada".format(j))
 
     def update_entrada(self, entrada, tax_aprendizado):
 
@@ -69,9 +67,6 @@ class Network():
 
         for b, w in zip(self.biases, self.weights):
             z = np.dot(w, activation)+b
-            import IPython as ipy 
-            ipy.embed()
-            time.sleep(1)
             zs.append(z)
             activation = sigmoid(z)
             activations.append(activation)
