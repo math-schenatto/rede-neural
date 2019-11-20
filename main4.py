@@ -117,19 +117,19 @@ def sigmoid_prime(z):
     return sigmoid(z)*(1-sigmoid(z))
 
 neuronios_entrada = 48
-neuronios_intermediario = 10
+neuronios_intermediario = 20
 neuronios_saida = 36
 
 rede = Network([neuronios_entrada,neuronios_intermediario, neuronios_saida])
 
 # np.save('weights3.npy', rede.weights)
-saved_weights = np.load("weights2.npy",mmap_mode=None, allow_pickle=True)
+saved_weights = np.load("weights3.npy",mmap_mode=None, allow_pickle=True)
 rede.weights = saved_weights
 
 training_inputs = get_training_data()
 test_input      = get_test_data()
 
-rede.SGD(training_inputs, 100, mini_batch_size=1, eta=0.9, test_data=test_input)
+rede.SGD(training_inputs, 1000, mini_batch_size=1, eta=0.5, test_data=test_input)
 
 print(" \n TREINAMENTO:")
 for single_test in training_inputs:
