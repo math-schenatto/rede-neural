@@ -34,10 +34,10 @@ class Network():
             for entrada in entradas:
                 self.update_entrada(entrada, tax_aprendizado)
 
-            if test_data: 
+            if test_data:
                 print("Epoch {} : {} /".format(j, self.evaluate(test_data), n_test))
-            else: 
-                print("Epoch {} finalizada".format(j))
+            # else:
+                # print("Epoch {} finalizada".format(j))
 
     def update_entrada(self, entrada, tax_aprendizado):
 
@@ -124,16 +124,17 @@ neuronios_saida = 36
 
 rede = Network([neuronios_entrada,neuronios_intermediario, neuronios_saida])
 
-# np.save('weights3.npy', rede.weights)
-#saved_weights = np.load("weights2.npy",mmap_mode=None, allow_pickle=True)
-#rede.weights = saved_weights
+# np.save('weights2.npy', rede.weights)
+saved_weights = np.load("weights.npy",mmap_mode=None, allow_pickle=True)
+rede.weights = saved_weights
 
 training_inputs = get_training_data()
 test_input      = get_test_data()
-print(rede.weights[-1])
-print('------------------------------------')
-print(rede.biases[-1])
-rede.SGD(training_inputs, 10000,  tax_aprendizado=0.9, test_data=test_input)
+# print(rede.weights[-1])
+# print('------------------------------------')
+# print(rede.biases[-1])
+# rede.SGD(training_inputs, 10000,  tax_aprendizado=0.9, test_data=test_input)
+# rede.SGD(training_inputs, 1000,  tax_aprendizado=0.9, test_data=test_input)
 
 print(" \n TREINAMENTO:")
 for single_test in training_inputs:
@@ -153,6 +154,6 @@ for x, single_test in enumerate(test_input):
         print( "\nNÃO FAZEM PARTE:" )
     rede.identify(single_test)
 
-print(rede.weights[-1])
-print('------------------------------------')
-print(rede.biases[-1])
+# print(rede.weights[-1])
+# print('------------------------------------')
+# print(rede.biases[-1])
