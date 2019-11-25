@@ -2,12 +2,13 @@ import random
 import numpy as np
 import random
 
-neuronios_entrada = 48
-neuronios_intermediario = 10
-neuronios_saida = 36
+input_neurons = 48
+hidden_neurons = 20
+output_neurons = 36
+learning_rate = 0.9
 
 #  Conjunto de treinamento
-treinamento = [
+training = [
     ('111111100001100011100101101001110001100001111111','000000000000000000000000000000000001'), # 0
     ('001100011100110100100100000100000100000100111111','000000000000000000000000000000000010'), # 1
     ('111111000001000001000001111111100000100000111111','000000000000000000000000000000000100'), # 2
@@ -47,10 +48,10 @@ treinamento = [
 ]
 
 def get_test_data():
-    test_data = random.sample(treinamento, 34)
+    test_data = random.sample(training, 34)
     # 20 caracteres com ruido mínimo
     for _ in range(20):
-        random_tuple = random.choice(treinamento)
+        random_tuple = random.choice(training)
         character    = random_tuple[0]
         answer       = random_tuple[1]
         for _ in range(2):
@@ -61,7 +62,7 @@ def get_test_data():
         test_data.append((character,answer))
     # 20 caracteres com ruido médio
     for _ in range(20):
-        random_tuple = random.choice(treinamento)
+        random_tuple = random.choice(training)
         character    = random_tuple[0]
         answer       = random_tuple[1]
         for _ in range(6):
@@ -72,7 +73,7 @@ def get_test_data():
         test_data.append((character,answer))
     # 20 caracteres com ruido avançado
     for _ in range(20):
-        random_tuple = random.choice(treinamento)
+        random_tuple = random.choice(training)
         character    = random_tuple[0]
         answer       = random_tuple[1]
         for _ in range(12):
@@ -85,16 +86,16 @@ def get_test_data():
     # Caracteres que não fazem parte do treinamento
     test_data.append(('000000000000000000000000000000000000000000000000','000000000000000000000000000000000001'))
     test_data.append(('111111111111111111111111111111111111111111111111','000000000000000000000000000000000001'))
-    test_data.append(('111111111111111111111111000000000000000000000000','000000000000000000000000000000000001'))
-    test_data.append(('000000000000000000000000111111111111111111111111','000000000000000000000000000000000001'))
-    test_data.append(('111111100001111111100001100001111111100001111111','000000000000000000000000000000000001'))
-    test_data.append(('100001010010001100001100010010100001010010001100','000000000000000000000000000000000001'))
+    test_data.append(('011111010001010001000011000110001100000000001100','000000000000000000000000000000000001'))
+    test_data.append(('001100001100001100001100001100000000001100001100','000000000000000000000000000000000001'))
+    test_data.append(('110001110010000010000100001000001011010011100000','000000000000000000000000000000000001'))
+    test_data.append(('001100001100001100111111111111001100001100001100','000000000000000000000000000000000001'),)
 
     float_tuple = reshape_array_to_float_tuple(test_data)
     return float_tuple
 
 def get_training_data():
-    float_tuple = reshape_array_to_float_tuple(treinamento)
+    float_tuple = reshape_array_to_float_tuple(training)
     return float_tuple
 
 def reshape_array_to_float_tuple(array):
@@ -111,5 +112,5 @@ def reshape_array_to_float_tuple(array):
         entrada_array = np.array(entrada, dtype=np.float32)
         saida_array = np.array(saida, dtype=np.float32)
 
-        training_inputs.append((np.reshape(entrada_array, (neuronios_entrada, 1)), np.reshape(saida_array, (neuronios_saida, 1))))
+        training_inputs.append((np.reshape(entrada_array, (input_neurons, 1)), np.reshape(saida_array, (output_neurons, 1))))
     return training_inputs
