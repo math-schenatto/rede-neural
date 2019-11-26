@@ -2,6 +2,7 @@ import numpy as np
 import random
 from index import index
 
+
 class Network():
     def __init__(self, sizes):
         self.num_neuronss = len(sizes)
@@ -27,7 +28,8 @@ class Network():
                 self.update_entrada(single_input, learning_rate)
 
             if test_inputs:
-                print("Epoch", epoch, ":", self.identify_many(test_inputs))
+                print("Epoch", epoch, ":", self.identify_many(test_inputs, epoch))
+
 
     def update_entrada(self, entrada, learning_rate):
         nabla_b = [np.zeros(b.shape) for b in self.biases]
@@ -71,9 +73,27 @@ class Network():
 
         return nabla_b, nabla_w
 
-    def identify_many(self, training_inputs):
+    def identify_many(self, training_inputs, epoch):
+        if epoch % 1000 == 0:
+        
+            results_list = []
+            for single_test in training_inputs:
+                vals = self.identify_for_confusion(single_test)
+                results_list.append(vals)
+
+            with open('classes/epoch_{}.txt'.format(epoch), 'w') as f: 
+                f.write(str(results_list)) 
+        
         return sum(int(self.identify(single_test)) for single_test in training_inputs)
 
+    def identify_for_confusion(self, single_test):
+        prediction = np.argmax(self.feedforward(single_test[0]))
+        answer = np.argmax(single_test[1])
+
+        result = index[answer] + '-' + index[prediction]
+
+        return result
+    
     def identify(self, single_test, log=False):
         prediction = np.argmax(self.feedforward(single_test[0]))
         answer = np.argmax(single_test[1])
