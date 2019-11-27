@@ -2,13 +2,12 @@ import numpy as np
 import random
 from index import index
 
-
 class Network():
-    def __init__(self, sizes):
-        self.num_neuronss = len(sizes)
-        self.sizes = sizes
-        self.biases = [np.random.uniform(low=0, high=1, size=(y, 1)) for y in sizes[1:]]
-        self.weights = [np.random.uniform(low=0, high=1, size=(y,x)) for x, y in zip(sizes[:-1], sizes[1:])]
+    def __init__(self, neurons):
+        self.neuron_layers = len(neurons)
+        self.neurons = neurons
+        self.biases = [np.random.uniform(low=0, high=1, size=(y, 1)) for y in neurons[1:]]
+        self.weights = [np.random.uniform(low=0, high=1, size=(y,x)) for x, y in zip(neurons[:-1], neurons[1:])]
 
     def feedforward(self, a):
         for b, w in zip(self.biases, self.weights):
@@ -25,23 +24,24 @@ class Network():
             packed_inputs = [training_inputs[k:k+1] for k in range(length)]
 
             for single_input in packed_inputs:
-                self.update_entrada(single_input, learning_rate)
+                self.update_input(single_input, learning_rate)
 
             if test_inputs:
-                print("Epoch", epoch, ":", self.identify_many(test_inputs, epoch))
+                print("Epoch", epoch, ":", self.identify_many(test_inputs))
+            else:
+                print("Epoch", epoch)
 
-
-    def update_entrada(self, entrada, learning_rate):
+    def update_input(self, single_input, learning_rate):
         nabla_b = [np.zeros(b.shape) for b in self.biases]
         nabla_w = [np.zeros(w.shape) for w in self.weights]
 
-        for x, y in entrada:
+        for x, y in single_input:
             delta_nabla_b, delta_nabla_w = self.backprop(x, y)
             nabla_b = [nb + dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
             nabla_w = [nw + dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]
 
-        self.weights = [w-(learning_rate/len(entrada))*nw for w, nw in zip(self.weights, nabla_w)]
-        self.biases = [b-(learning_rate/len(entrada))*nb for b, nb in zip(self.biases, nabla_b)]
+        self.weights = [w-(learning_rate/len(single_input))*nw for w, nw in zip(self.weights, nabla_w)]
+        self.biases = [b-(learning_rate/len(single_input))*nb for b, nb in zip(self.biases, nabla_b)]
 
     def backprop(self,x,y):
         nabla_b = [np.zeros(b.shape) for b in self.biases]
@@ -64,7 +64,7 @@ class Network():
         nabla_b[-1] = delta
         nabla_w[-1] = np.dot(delta, activations[-2].transpose())
 
-        for l in range(2, self.num_neuronss):
+        for l in range(2, self.neuron_layers):
             z = zs[-l]
             sp = sigmoid_prime(z)
             delta = np.dot(self.weights[-l+1].transpose(), delta) * sp
@@ -73,27 +73,9 @@ class Network():
 
         return nabla_b, nabla_w
 
-    def identify_many(self, training_inputs, epoch):
-        if epoch % 1000 == 0:
-        
-            results_list = []
-            for single_test in training_inputs:
-                vals = self.identify_for_confusion(single_test)
-                results_list.append(vals)
-
-            with open('classes/epoch_{}.txt'.format(epoch), 'w') as f: 
-                f.write(str(results_list)) 
-        
+    def identify_many(self, training_inputs):
         return sum(int(self.identify(single_test)) for single_test in training_inputs)
 
-    def identify_for_confusion(self, single_test):
-        prediction = np.argmax(self.feedforward(single_test[0]))
-        answer = np.argmax(single_test[1])
-
-        result = index[answer] + '-' + index[prediction]
-
-        return result
-    
     def identify(self, single_test, log=False):
         prediction = np.argmax(self.feedforward(single_test[0]))
         answer = np.argmax(single_test[1])
@@ -104,8 +86,8 @@ class Network():
                 print("❌", index[answer], "→", index[prediction])
         return prediction == answer
 
+    # Retorna o vetor das derivadas parciais
     def cost_derivative(self, output_activations, y):
-        # Retorna o vetor das derivadas parciais
         return output_activations-y
 
 def sigmoid(z):
