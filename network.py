@@ -32,8 +32,8 @@ class Network():
                 print("Epoch", epoch)
 
     def update_input(self, single_input, learning_rate):
-        nabla_b = [np.zeros(b.shape) for b in self.biases]
-        nabla_w = [np.zeros(w.shape) for w in self.weights]
+        nabla_b = [np.zeros(biase.shape) for biase in self.biases]
+        nabla_w = [np.zeros(weight.shape) for weight in self.weights]
 
         for x, y in single_input:
             delta_nabla_b, delta_nabla_w = self.backprop(x, y)
@@ -43,9 +43,10 @@ class Network():
         self.weights = [w-(learning_rate/len(single_input))*nw for w, nw in zip(self.weights, nabla_w)]
         self.biases = [b-(learning_rate/len(single_input))*nb for b, nb in zip(self.biases, nabla_b)]
 
+    # x = entrada ; y = saida esperada
     def backprop(self,x,y):
-        nabla_b = [np.zeros(b.shape) for b in self.biases]
-        nabla_w = [np.zeros(w.shape) for w in self.weights]
+        nabla_b = [np.zeros(biase.shape) for biase in self.biases]
+        nabla_w = [np.zeros(weight.shape) for weight in self.weights]
 
         # Feedforward
         activation = x
@@ -54,19 +55,20 @@ class Network():
 
         # lista para armazenar todos os vetores z, camada por camada
         zs = []
-        for b, w in zip(self.biases, self.weights):
-            z = np.dot(w, activation)+b
+        for biase, weight in zip(self.biases, self.weights):
+            z = np.dot(weight, activation) + biase
             zs.append(z)
             activation = sigmoid(z)
             activations.append(activation)
 
-        delta = self.cost_derivative(activations[-1], y) * sigmoid_prime(zs[-1])
+        # delta = fator erro
+        delta = self.cost_derivative(activations[-1], y) * 1
         nabla_b[-1] = delta
         nabla_w[-1] = np.dot(delta, activations[-2].transpose())
 
         for l in range(2, self.neuron_layers):
             z = zs[-l]
-            sp = sigmoid_prime(z)
+            sp = 1
             delta = np.dot(self.weights[-l+1].transpose(), delta) * sp
             nabla_b[-l] = delta
             nabla_w[-l] = np.dot(delta, activations[-l-1].transpose())
@@ -93,6 +95,6 @@ class Network():
 def sigmoid(z):
     return 1.0/(1.0+np.exp(-z))
 
-# Função para retornar as derivadas da função Sigmóide
-def sigmoid_prime(z):
-    return sigmoid(z)*(1-sigmoid(z))
+# # Função para retornar as derivadas da função Sigmóide
+# def sigmoid_prime(z):
+#     return sigmoid(z)*(1-sigmoid(z))
