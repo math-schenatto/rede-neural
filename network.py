@@ -8,6 +8,44 @@ class Network():
         self.neurons = neurons
         self.biases = [np.random.uniform(low=0, high=1, size=(y, 1)) for y in neurons[1:]]
         self.weights = [np.random.uniform(low=0, high=1, size=(y,x)) for x, y in zip(neurons[:-1], neurons[1:])]
+        self.metrics = {
+            '0':{'fpr':[],'tpr':[]},
+            '1':{'fpr':[],'tpr':[]},
+            '2':{'fpr':[],'tpr':[]},
+            '3':{'fpr':[],'tpr':[]},
+            '4':{'fpr':[],'tpr':[]},
+            '5':{'fpr':[],'tpr':[]},
+            '6':{'fpr':[],'tpr':[]},
+            '7':{'fpr':[],'tpr':[]},
+            '8':{'fpr':[],'tpr':[]},
+            '9':{'fpr':[],'tpr':[]},
+            'A':{'fpr':[],'tpr':[]},
+            'B':{'fpr':[],'tpr':[]},
+            'C':{'fpr':[],'tpr':[]},
+            'D':{'fpr':[],'tpr':[]},
+            'E':{'fpr':[],'tpr':[]},
+            'F':{'fpr':[],'tpr':[]},
+            'G':{'fpr':[],'tpr':[]},
+            'H':{'fpr':[],'tpr':[]},
+            'I':{'fpr':[],'tpr':[]},
+            'J':{'fpr':[],'tpr':[]},
+            'K':{'fpr':[],'tpr':[]},
+            'L':{'fpr':[],'tpr':[]},
+            'M':{'fpr':[],'tpr':[]},
+            'N':{'fpr':[],'tpr':[]},
+            'O':{'fpr':[],'tpr':[]},
+            'P':{'fpr':[],'tpr':[]},
+            'Q':{'fpr':[],'tpr':[]},
+            'R':{'fpr':[],'tpr':[]},
+            'S':{'fpr':[],'tpr':[]},
+            'T':{'fpr':[],'tpr':[]},
+            'U':{'fpr':[],'tpr':[]},
+            'V':{'fpr':[],'tpr':[]},
+            'W':{'fpr':[],'tpr':[]},
+            'X':{'fpr':[],'tpr':[]},
+            'Y':{'fpr':[],'tpr':[]},
+            'Z':{'fpr':[],'tpr':[]}
+        }
 
     def feedforward(self, a):
         for b, w in zip(self.biases, self.weights):
@@ -32,8 +70,8 @@ class Network():
                 print("Epoch", epoch)
 
     def update_input(self, single_input, learning_rate):
-        nabla_b = [np.zeros(b.shape) for b in self.biases]
-        nabla_w = [np.zeros(w.shape) for w in self.weights]
+        nabla_b = [np.zeros(biase.shape) for biase in self.biases]
+        nabla_w = [np.zeros(weight.shape) for weight in self.weights]
 
         for x, y in single_input:
             delta_nabla_b, delta_nabla_w = self.backprop(x, y)
@@ -43,9 +81,34 @@ class Network():
         self.weights = [w-(learning_rate/len(single_input))*nw for w, nw in zip(self.weights, nabla_w)]
         self.biases = [b-(learning_rate/len(single_input))*nb for b, nb in zip(self.biases, nabla_b)]
 
+    def get_metrics(self,training_inputs):
+        true_positives  = {'0':0,'1':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'A':0,'B':0,'C':0,'D':0,'E':0,'F':0,'G':0,'H':0,'I':0,'J':0,'K':0,'L':0,'M':0,'N':0,'O':0,'P':0,'Q':0,'R':0,'S':0,'T':0,'U':0,'V':0,'W':0,'X':0,'Y':0,'Z':0}
+        true_negatives  = {'0':0,'1':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'A':0,'B':0,'C':0,'D':0,'E':0,'F':0,'G':0,'H':0,'I':0,'J':0,'K':0,'L':0,'M':0,'N':0,'O':0,'P':0,'Q':0,'R':0,'S':0,'T':0,'U':0,'V':0,'W':0,'X':0,'Y':0,'Z':0}
+        false_positives = {'0':0,'1':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'A':0,'B':0,'C':0,'D':0,'E':0,'F':0,'G':0,'H':0,'I':0,'J':0,'K':0,'L':0,'M':0,'N':0,'O':0,'P':0,'Q':0,'R':0,'S':0,'T':0,'U':0,'V':0,'W':0,'X':0,'Y':0,'Z':0}
+        false_negatives = {'0':0,'1':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'A':0,'B':0,'C':0,'D':0,'E':0,'F':0,'G':0,'H':0,'I':0,'J':0,'K':0,'L':0,'M':0,'N':0,'O':0,'P':0,'Q':0,'R':0,'S':0,'T':0,'U':0,'V':0,'W':0,'X':0,'Y':0,'Z':0}
+
+        for single_test in training_inputs:
+            prediction = np.argmax(self.feedforward(single_test[0]))
+            prediction = index[prediction]
+            answer = np.argmax(single_test[1])
+            answer = index[answer]
+            if prediction == answer:
+                true_positives[answer] += 1
+                for character in true_negatives:
+                    true_negatives[character] += 1
+            else:
+                false_positives[prediction] += 1
+                false_negatives[answer] += 1
+        for character in self.metrics:
+            false_positive_rate = false_positives[character] / (false_positives[character] + len(false_positives) - 1)
+            true_positive_rate = true_positives[character] / (true_positives[character] + false_negatives[character])
+            self.metrics[character]['fpr'].append(false_positive_rate)
+            self.metrics[character]['tpr'].append(true_positive_rate)
+
+    # x = entrada ; y = saida esperada
     def backprop(self,x,y):
-        nabla_b = [np.zeros(b.shape) for b in self.biases]
-        nabla_w = [np.zeros(w.shape) for w in self.weights]
+        nabla_b = [np.zeros(biase.shape) for biase in self.biases]
+        nabla_w = [np.zeros(weight.shape) for weight in self.weights]
 
         # Feedforward
         activation = x
@@ -54,19 +117,20 @@ class Network():
 
         # lista para armazenar todos os vetores z, camada por camada
         zs = []
-        for b, w in zip(self.biases, self.weights):
-            z = np.dot(w, activation)+b
+        for biase, weight in zip(self.biases, self.weights):
+            z = np.dot(weight, activation) + biase
             zs.append(z)
             activation = sigmoid(z)
             activations.append(activation)
 
-        delta = self.cost_derivative(activations[-1], y) * sigmoid_prime(zs[-1])
+        # delta = fator erro
+        delta = self.cost_derivative(activations[-1], y) * 1
         nabla_b[-1] = delta
         nabla_w[-1] = np.dot(delta, activations[-2].transpose())
 
         for l in range(2, self.neuron_layers):
             z = zs[-l]
-            sp = sigmoid_prime(z)
+            sp = 1
             delta = np.dot(self.weights[-l+1].transpose(), delta) * sp
             nabla_b[-l] = delta
             nabla_w[-l] = np.dot(delta, activations[-l-1].transpose())
@@ -93,6 +157,6 @@ class Network():
 def sigmoid(z):
     return 1.0/(1.0+np.exp(-z))
 
-# Função para retornar as derivadas da função Sigmóide
-def sigmoid_prime(z):
-    return sigmoid(z)*(1-sigmoid(z))
+# # Função para retornar as derivadas da função Sigmóide
+# def sigmoid_prime(z):
+#     return sigmoid(z)*(1-sigmoid(z))
