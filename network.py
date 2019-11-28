@@ -9,12 +9,15 @@ class Network():
         self.biases = [np.random.uniform(low=0, high=1, size=(y, 1)) for y in neurons[1:]]
         self.weights = [np.random.uniform(low=0, high=1, size=(y,x)) for x, y in zip(neurons[:-1], neurons[1:])]
 
+    def sigmoid(self, z):
+        return 1.0/(1.0+np.exp(-z))
+    
     def feedforward(self, a):
         for b, w in zip(self.biases, self.weights):
-            a = sigmoid(np.dot(w, a)+b)
+            a = self.sigmoid(np.dot(w, a)+b)
         return a
 
-    def SGD(self, training_inputs, epochs, learning_rate, test_inputs=None):
+    def start_training(self, training_inputs, epochs, learning_rate, test_inputs=None):
         if test_inputs:
             test_inputs = list(test_inputs)
             n_test = len(test_inputs)
@@ -32,48 +35,52 @@ class Network():
                 print("Epoch", epoch)
 
     def update_input(self, single_input, learning_rate):
-        nabla_b = [np.zeros(biase.shape) for biase in self.biases]
-        nabla_w = [np.zeros(weight.shape) for weight in self.weights]
+        new_biase = [np.zeros(biase.shape) for biase in self.biases]
+        new_weight = [np.zeros(weight.shape) for weight in self.weights]
 
         for x, y in single_input:
-            delta_nabla_b, delta_nabla_w = self.backprop(x, y)
-            nabla_b = [nb + dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
-            nabla_w = [nw + dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]
+            delta_new_biase, delta_new_weight = self.backprop(x, y)
+            new_biase = [nb + dnb for nb, dnb in zip(new_biase, delta_new_biase)]
+            new_weight = [nw + dnw for nw, dnw in zip(new_weight, delta_new_weight)]
 
-        self.weights = [w-(learning_rate/len(single_input))*nw for w, nw in zip(self.weights, nabla_w)]
-        self.biases = [b-(learning_rate/len(single_input))*nb for b, nb in zip(self.biases, nabla_b)]
+        self.weights = [w-(learning_rate/len(single_input))*nw for w, nw in zip(self.weights, new_weight)]
+        self.biases = [b-(learning_rate/len(single_input))*nb for b, nb in zip(self.biases, new_biase)]
 
     # x = entrada ; y = saida esperada
     def backprop(self,x,y):
-        nabla_b = [np.zeros(biase.shape) for biase in self.biases]
-        nabla_w = [np.zeros(weight.shape) for weight in self.weights]
-
-        # Feedforward
+        new_biase = [np.zeros(biase.shape) for biase in self.biases]
+        new_weight = [np.zeros(weight.shape) for weight in self.weights]
+        error_factor = 1
+       
         activation = x
-        # Lista para armazenar todas as ativações, camada por camada
         activations = [x]
-
-        # lista para armazenar todos os vetores z, camada por camada
         zs = []
+
+        # Here we are calculating feedforward function
+        ##############################################################
         for biase, weight in zip(self.biases, self.weights):
             z = np.dot(weight, activation) + biase
             zs.append(z)
-            activation = sigmoid(z)
+            activation = self.sigmoid(z)
             activations.append(activation)
-
+        ###############################################################
+        
+        #calculating and update error
+        ############################################################### 
         # delta = fator erro
-        delta = self.cost_derivative(activations[-1], y) * 1
-        nabla_b[-1] = delta
-        nabla_w[-1] = np.dot(delta, activations[-2].transpose())
+        delta = self.cost_derivative(activations[-1], y) * error_factor
+        new_biase[-1] = delta
+        new_weight[-1] = np.dot(delta, activations[-2].transpose())
 
-        for l in range(2, self.neuron_layers):
-            z = zs[-l]
-            sp = 1
-            delta = np.dot(self.weights[-l+1].transpose(), delta) * sp
-            nabla_b[-l] = delta
-            nabla_w[-l] = np.dot(delta, activations[-l-1].transpose())
+        layer = 2
+    
+        z = zs[-layer]
+        delta = np.dot(self.weights[-layer+1].transpose(), delta) * error_factor
+        new_biase[-layer] = delta
+        new_weight[-layer] = np.dot(delta, activations[-layer-1].transpose())
+        #########################################################################
 
-        return nabla_b, nabla_w
+        return new_biase, new_weight
 
     def identify_many(self, training_inputs):
         return sum(int(self.identify(single_test)) for single_test in training_inputs)
@@ -92,9 +99,4 @@ class Network():
     def cost_derivative(self, output_activations, y):
         return output_activations-y
 
-def sigmoid(z):
-    return 1.0/(1.0+np.exp(-z))
 
-# # Função para retornar as derivadas da função Sigmóide
-# def sigmoid_prime(z):
-#     return sigmoid(z)*(1-sigmoid(z))
