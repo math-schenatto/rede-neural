@@ -1,4 +1,4 @@
-# rede-neural
+# Rede Neural
 
 <strong>Disciplina: Inteligência Artificial 2</strong></br>
 <strong>Alunos: Lucas Kuhn e Matheus Schenatto</strong>
@@ -29,3 +29,8 @@ avançado de ruído (12 bits de diferença) e 6% não fazem parte do conjunto or
 <h3>Exemplo</h3>
 
 <img src="assets/exgen.png">
+
+<h3>Resultados</h3>
+
+<img src="assets/resnet.png">
+<img src="assets/resnet2.png">
